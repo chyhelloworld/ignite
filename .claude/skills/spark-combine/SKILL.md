@@ -139,11 +139,13 @@ relationships: []
 
 ### Step 4 — 更新状态总览
 
-在 `想法池/_状态总览.md` 表格末尾追加一行:
+在 `想法池/_状态总览.md` 表格末尾追加一行(列与表头一致:id/标题/status/verdict/category/platform/excitement/effort/updated;新 combo 的 verdict 等列留空):
 
 ```
-| idea-NNNN | 标题 | raw | combo |  |  |  |  | YYYY-MM-DD |
+| idea-NNNN | 标题 | raw |  |  |  |  |  | YYYY-MM-DD |
 ```
+
+（`kind: combo` 记录在原子 frontmatter 里,状态总览无 kind 列,不要把 `combo` 写进 verdict 列。）
 
 ---
 
