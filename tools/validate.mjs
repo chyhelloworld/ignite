@@ -33,14 +33,16 @@ for (const f of requiredFiles) {
 // 3) 每个 skill 目录必须有带 name + description 的 SKILL.md
 const skillsDir = join(root, ".claude/skills");
 if (existsSync(skillsDir)) {
-  for (const name of readdirSync(skillsDir)) {
+  for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue; // 只看 skill 子目录,忽略 .DS_Store 等散落文件
+    const name = entry.name;
     const p = join(skillsDir, name, "SKILL.md");
     if (!existsSync(p)) { errors.push(`skill 缺 SKILL.md: ${name}`); continue; }
-    const text = readFileSync(p, "utf8");
+    const text = readFileSync(p, "utf8").replace(/\r\n/g, "\n"); // 归一 CRLF,避免 Windows checkout 误判
     const fm = text.match(/^---\n([\s\S]*?)\n---/);
     if (!fm) { errors.push(`${name}: 缺 YAML frontmatter`); continue; }
-    if (!/\bname:\s*\S/.test(fm[1])) errors.push(`${name}: frontmatter 缺 name`);
-    if (!/\bdescription:\s*[\S|]/.test(fm[1])) errors.push(`${name}: frontmatter 缺 description`);
+    if (!/\bname:[^\S\n]*\S/.test(fm[1])) errors.push(`${name}: frontmatter 缺 name`);
+    if (!/\bdescription:[^\S\n]*\S/.test(fm[1])) errors.push(`${name}: frontmatter 缺 description`);
   }
 }
 
