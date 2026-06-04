@@ -63,8 +63,8 @@
 skill 是 Claude Code **项目级 skill**(`.claude/skills/`)。克隆本仓库,在仓库目录里打开 Claude Code,你的想法就长在 `想法池/` 里:
 
 ```bash
-git clone <your-repo-url> 想法引擎
-cd 想法引擎
+git clone https://github.com/chyhelloworld/ignite.git
+cd ignite
 claude            # 打开 Claude Code
 ```
 
