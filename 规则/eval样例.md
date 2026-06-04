@@ -22,3 +22,8 @@
 ## S5 未知术语应被背景调查
 输入:`/捕捉 "做个 roguelike 的 SteamDB"` → `/完善`
 期望:背景调查标记 SteamDB/roguelike,确认后联网查并写进 `背景库/概念词典.md`(带来源+日期)。
+
+## S6 候选出商业设计与 PRD
+前置:一个 verdict=go 的候选(idea-NNNN,status=candidate)
+输入:`/商业 idea-NNNN` → `/prd idea-NNNN`
+期望:商业设计写 `产出/idea-NNNN_商业设计.md`(含定价分层),artifacts 追加,status 仍 candidate;PRD 写 `产出/idea-NNNN_PRD.md`(功能需求带验收标准),status 置 documented。非 go 候选被 `/商业` 拦截;无商业设计的候选被 `/prd` 拦截。
