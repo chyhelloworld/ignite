@@ -5,44 +5,54 @@ import { join } from "node:path";
 const root = process.cwd();
 const errors = [];
 
-// 1) 必需目录
+// 1) required directories
 const requiredDirs = [
-  "想法池", "调研", "决策档案", "产出",
-  "背景库", "背景库/项目档案", "规则", ".claude/skills",
+  "ideas", "research", "decisions", "outputs",
+  "background", "background/projects", "rules", "skills",
 ];
 for (const d of requiredDirs) {
-  if (!existsSync(join(root, d)) || !statSync(join(root, d)).isDirectory()) {
-    errors.push(`缺少目录: ${d}`);
+  const st = statSync(join(root, d), { throwIfNoEntry: false });
+  if (!st?.isDirectory()) errors.push(`missing dir: ${d}`);
+}
+
+// 2) required files
+const requiredFiles = [
+  "ideas/_status.md",
+  "background/glossary.md",
+  "background/_index.md",
+  "rules/schema.md",
+  "rules/category-platform-map.md",
+  "rules/death-reasons.md",
+  "rules/eval-samples.md",
+  ".claude-plugin/plugin.json",
+  ".claude-plugin/marketplace.json",
+];
+for (const f of requiredFiles) {
+  if (!existsSync(join(root, f))) errors.push(`missing file: ${f}`);
+}
+
+// 3) plugin manifests must be valid JSON
+for (const f of [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json"]) {
+  const p = join(root, f);
+  if (existsSync(p)) {
+    try { JSON.parse(readFileSync(p, "utf8")); }
+    catch { errors.push(`${f}: invalid JSON`); }
   }
 }
 
-// 2) 必需文件(Phase A 末尾应全部存在)
-const requiredFiles = [
-  "想法池/_状态总览.md",
-  "背景库/概念词典.md",
-  "背景库/_背景索引.md",
-  "规则/schema与阶段定义.md",
-  "规则/品类与平台映射.md",
-  "规则/死因词表.md",
-  "规则/eval样例.md",
-];
-for (const f of requiredFiles) {
-  if (!existsSync(join(root, f))) errors.push(`缺少文件: ${f}`);
-}
-
-// 3) 每个 skill 目录必须有带 name + description 的 SKILL.md
-const skillsDir = join(root, ".claude/skills");
+// 4) each skill dir must have a SKILL.md with name + description frontmatter
+const skillsDir = join(root, "skills");
 if (existsSync(skillsDir)) {
   for (const entry of readdirSync(skillsDir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue; // 只看 skill 子目录,忽略 .DS_Store 等散落文件
+    if (!entry.isDirectory()) continue; // only skill subdirs, ignore stray files
     const name = entry.name;
     const p = join(skillsDir, name, "SKILL.md");
-    if (!existsSync(p)) { errors.push(`skill 缺 SKILL.md: ${name}`); continue; }
-    const text = readFileSync(p, "utf8").replace(/\r\n/g, "\n"); // 归一 CRLF,避免 Windows checkout 误判
+    if (!existsSync(p)) { errors.push(`skill missing SKILL.md: ${name}`); continue; }
+    const text = readFileSync(p, "utf8").replace(/\r\n/g, "\n"); // normalize CRLF
     const fm = text.match(/^---\n([\s\S]*?)\n---/);
-    if (!fm) { errors.push(`${name}: 缺 YAML frontmatter`); continue; }
-    if (!/\bname:[^\S\n]*\S/.test(fm[1])) errors.push(`${name}: frontmatter 缺 name`);
-    if (!/\bdescription:[^\S\n]*\S/.test(fm[1])) errors.push(`${name}: frontmatter 缺 description`);
+    if (!fm) { errors.push(`${name}: missing YAML frontmatter`); continue; }
+    if (!/\bname:[^\S\n]*\S/.test(fm[1])) errors.push(`${name}: frontmatter missing name`);
+    if (!/\bdescription:[^\S\n]*\S/.test(fm[1])) errors.push(`${name}: frontmatter missing description`);
   }
 }
 
@@ -50,4 +60,4 @@ if (errors.length) {
   console.error("FAIL\n" + errors.map((e) => "  - " + e).join("\n"));
   process.exit(1);
 }
-console.log("OK: 结构契约与 skill frontmatter 全部通过");
+console.log("OK: structure contract and skill frontmatter all pass");

@@ -1,0 +1,15 @@
+{
+  "name": "ignite",
+  "owner": { "name": "chyhelloworld" },
+  "metadata": { "description": "Idea Engine (Spark) marketplace", "version": "1.0.0" },
+  "plugins": [
+    {
+      "name": "spark",
+      "source": "./",
+      "description": "Idea Engine — idea -> research -> evaluate -> recombine -> business -> PRD",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["idea-management", "claude-code", "skills", "agent", "prompt-engineering"]
+    }
+  ]
+}
