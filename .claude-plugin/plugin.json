@@ -1,0 +1,8 @@
+{
+  "name": "spark",
+  "description": "Idea Engine — capture raw ideas, research competitors, evaluate feasibility, recombine dead ideas into sparks, and produce business design + PRD. A local-file knowledge engine.",
+  "version": "1.0.0",
+  "author": { "name": "chyhelloworld" },
+  "homepage": "https://github.com/chyhelloworld/ignite",
+  "license": "CC-BY-NC-4.0"
+}
